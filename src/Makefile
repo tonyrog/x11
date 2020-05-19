@@ -22,14 +22,10 @@ all: $(OBJS)
 clean:
 	rm $(OBJS) xproto.gx.hrl xproto.gx.erl
 
-$(EBIN)/x.beam:		xproto.gx.hrl ../include/x.hrl
-$(EBIN)/xcli.beam:	xproto.gx.hrl ../include/x.hrl
-$(EBIN)/xproto.beam:	xproto.gx.hrl ../include/x.hrl
-$(EBIN)/x_run.beam:	../include/x.hrl xproto.gx.hrl
-$(EBIN)/x_demo.beam:	../include/x.hrl xproto.gx.hrl
-
 xproto.gx.hrl:	xproto.h
 	$(ERL) -noshell -pa ../ebin -s gx start xproto.h
 
 $(EBIN)/%.beam:	%.erl
-	$(ERLC) -o $(EBIN) $(ERLC_FLAGS) $<
+	$(ERLC) -o $(EBIN) $(ERLC_FLAGS) -MMD -M -MF depends/$<.dep $<
+
+-include $(OBJS:%.beam=depends/%.erl.dep)
